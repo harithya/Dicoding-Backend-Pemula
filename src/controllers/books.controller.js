@@ -1,10 +1,26 @@
 const books = require('../models/books');
 
 exports.all = (request, h) => {
+    let data = books.all();
+
+    const { reading, finished, name } = request.query;
+
+    if (reading) {
+        data = books.all().filter((val) => val.reading == Boolean(parseInt(reading)));
+    }
+
+    if (finished) {
+        data = books.all().filter((val) => val.finished == Boolean(parseInt(finished)));
+    }
+
+    if (name) {
+        data = books.all().filter((val) => val.name.toLowerCase().match(name.toLowerCase()));
+    }
+
     return h.response({
         status: "success",
         data: {
-            books: books.all().map((val) => {
+            books: data.map((val) => {
                 return {
                     id: val.id,
                     name: val.name,
